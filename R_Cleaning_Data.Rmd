@@ -1,5 +1,5 @@
 ---
-title: 'Part 2: Data Cleaning'
+title: 'Data Cleaning'
 author: "Matt Steele"
 date: "`r Sys.Date()`"
 output: 
@@ -19,8 +19,6 @@ output:
     -   R for Data Science, 2nd Edition
 
     -   R Programming for Statistics and Data Science
-    
-    -   Text Mining with R
 
 ------------------------------------------------------------------------
 
@@ -28,7 +26,7 @@ output:
 #| label: working directory
 #| include: false
 
-setwd("C:/Users/Matt/Documents/GitHub/r_data_cleaning_fall23")
+setwd("path_to_folder")
 
 
 ```
@@ -97,7 +95,7 @@ this function allows you to read a csv file into a tibble data frame
 #| label: read_csv function
 #| eval: false
 
-reviews_df <- read_csv("customer_reviews.csv")
+sw_df <- read_csv("starwars.csv")
 
 ```
 
@@ -117,6 +115,7 @@ this function allows you to read Excel files in a tibble data frame
 
 horror_books <- readxl::read_xlsx("halloween.xlsx", sheet = 1)
 horror_movies <- readxl::read_xlsx("halloween.xlsx", sheet = 2)
+horror_articles <- readxl::read_xlsx("halloween.xlsx", sheet = 3)
 
 ```
 
@@ -149,24 +148,22 @@ demographics_df <- haven::read_sav("demographics.sav")
 The pipe operator allows you to run commands or operation on a single
 object based on an order of operations
 
--   let's say you want to see the **age**, **rating**, and **feedback**
-    of customer who shopped in the *dresses* department
+-   let's say you want to see the **name**, **height**, **mass**, and **species**
+    of characters who were born on **Tatooine** department
 
 ```{r}
 #| label: pipe operator example
 #| eval: false
 
-view(reviews_df)
-
-reviews_df |> # object we are working on
-  filter(Department_Name == "Dresses") |> # first operation
-  select(Clothing_ID, Age, Rating, Positive_Feedback_Count) # second operation
+sw_df |> # object we are working on
+  filter(homeworld == "Tatooine") |> # first operation
+  select(name, height, mass, species) # second operation
 
 # order of operations matter
 
-reviews_df |> # object we are working on
-  select(Clothing_ID, Age, Rating, Positive_Feedback_Count) |> # first operation
-  filter(Department_Name == "Dresses") # second operation
+sw_df |> # object we are working on
+  select(name, height, mass, species) |> # first operation
+  filter(homeworld == "Tatooine") # second operation
 
 # why did this not work?
 
@@ -184,7 +181,7 @@ view the contents of a data frame in a separate viewer window or in the RStudio 
 #| label: view function
 #| eval: false
 
-view(reviews_df)
+view(sw_df)
 
 ```
 
@@ -201,7 +198,7 @@ your data but in a more compact manner
 #| label: glimpse function
 #| eval: false
 
-glimpse(demographics_df)
+glimpse(sw_df)
 
 ```
 
@@ -236,14 +233,14 @@ observations in a variable
 #| label: filter function
 #| eval: false
 
-reviews_df
+sw_df
 
-# let's filter the data frame so we are seeing people who bought pants
+# let's filter the data frame so we are seeing characters who have blue eyes
 
-reviews_pants <- reviews_df |> 
-  filter(Class_Name == "Pants")
+sw_eye <- sw_df |> 
+  filter(eye_color == "blue")
 
-reviews_pants
+sw_eye
 
 ```
 
@@ -272,12 +269,14 @@ boolean operators allows you to build criteria in your code
 #| label: filter with more than one criteria
 #| eval: false
 
-# let's filter the data frame for people who did not buy pants and are over 50 years old
+# let's filter the data frame for characters who 
+  # do have blue eyes 
+    # and were born after 50 BBY
 
-reviews_pants50 <- reviews_df |> 
-  filter(Class_Name != "Pants" & Age > 50)
+sw_eye50 <- sw_df |> 
+  filter(eye_color == "blue" & birth_year < 50)
 
-reviews_pants50
+sw_eye50
 
 ```
 
@@ -293,19 +292,19 @@ the select function allows you to *keep* or *discard* variables
 #| label: select function
 #| eval: false
 
-# let's just keep the numeric information
+# keep variables
 
-reviews_select <- reviews_df |> 
-  select(Clothing_ID, Age, Rating, Recommended_IND)
+sw_select <- sw_df |> 
+  select(name, height, mass)
 
-reviews_select
+sw_select
 
-# let's remove the division and department name variables from our data frame
+# remove variables
 
-reviews_notSelect <- reviews_pants50 |> 
-  select(-Division_Name, -Department_Name)
+sw_not_select <- sw_df |> 
+  select(-height, -mass)
 
-reviews_notSelect
+sw_not_select
 
 ```
 
@@ -327,15 +326,15 @@ variables based on the observations in the variables
 demographics_df
 
 demographics_mutate <- demographics_df |> 
-  mutate(income_new = income/1000) |> 
-  relocate(income_new, .after = income)
+  mutate(income_new = income/1000) |>  # create new variable
+  relocate(income_new, .after = income) # relocate variable in data frame
 
 demographics_mutate
 
 # let's overwrite the old variable
 
 demographics_overwrite <- demographics_df |> 
-  mutate(income = income/1000)
+  mutate(income = income/1000) # overwrite income variable
 
 demographics_overwrite
 
@@ -353,16 +352,15 @@ the arrange function allows you to sort variables
 #| label: arrange function
 #| eval: false
 
-# let's look in the customers review data frame and see what customers gave the highest rating
+# oldest characters
 
-reviews_df |> 
-  arrange(desc(Rating))
+sw_df |> 
+  arrange(desc(birth_year))
 
-# you can add multiple criteria to your sort
+# characters with the same skin color than the same hair color
 
-reviews_df |> 
-  arrange(desc(Rating), Class_Name) |> 
-  select(Clothing_ID, Rating, Class_Name)
+sw_df |> 
+  arrange(desc(skin_color), hair_color)
 
 ```
 
@@ -378,30 +376,20 @@ the **group_by** function allows you to group common observations in a variable 
 #| label: group_by and summarise
 #| eval: false
 
-reviews_group <- reviews_df |> 
-  group_by(Class_Name) |> 
-  summarise(mean(Rating)) # get the average for ratings
+sw_group <- sw_df |> 
+  group_by(sex) |>
+  summarise(avg_height = mean(height)) # get the mean of height for each group
 
-reviews_group
+sw_group
 
 # you can add as many summaries as you want
 
-reviews_group <- reviews_df |> 
-  group_by(Class_Name) |> 
-  summarise(n = n(), # get the instances count
-            positive_tot = sum(Positive_Feedback_Count), # get the sum of positive feedback 
-            positive_avg = mean(Positive_Feedback_Count), # get the average of positive feedback
-            rating = mean(Rating)) # get the average rating
-
-
-# you can also add multiple groups
-
-reviews_group <- reviews_df |> 
-  group_by(Class_Name, Recommended_IND) |> 
-  summarise(n = n(), 
-            positive_tot = sum(Positive_Feedback_Count), 
-            positive_avg = (sum(Positive_Feedback_Count)/n), 
-            rating = mean(Rating))
+sw_group <- sw_df |> 
+  group_by(sex) |>
+  summarise(avg_height = mean(height), # get the mean of height for each group
+            count = n(), # get the count
+            avg_bmi = mean(height/mass) # calculate bmi and get average
+            ) 
 
 ```
 
@@ -413,19 +401,39 @@ reviews_group <- reviews_df |>
 
 ## Base Function: as.character 
 
-This function along with **mutate** will allow you to change the data type of a variable. For this example we are going to recode the *Clothing_ID* variable to interpret the data type as a *character* instead of a *double*
+The **as.** function along with **mutate** will allow you to change the
+data type of a variable. For this example we are going to recode the
+*character_id* variable to interpret the data type as a *character*
+instead of a *double*
 
 ```{r}
 #| label: data type recode
 #| eval: false
 
-reviews_df <- reviews_df |> 
-  mutate(Clothing_ID = as.character(Clothing_ID))
 
-reviews_df
+sw_df <- sw_df |> 
+  mutate(character_id = as.character(character_id))
+
+sw_df
 
 ```
 
+## Forcats function: as_factor
+
+This function allows you to redefine a variable value as a factor using the **mutate** function.
+
+```{r}
+#| label: recode factors
+#| eval: false
+
+sw_df
+
+sw_df <- sw_df |> 
+  mutate(sex = as_factor(sex))
+
+levels(sw_df$sex)
+
+```
 
 
 <br />
@@ -440,17 +448,19 @@ we can rename the values of observations within a variable using the **mutate** 
 #| label: recode observations
 #| eval: false
 
+# let's create a new variable with to give numeric levels instead of value labels
 
-# let's change the values from 1/0 to yes/no
+sw_df <- sw_df |> 
+  mutate(sex_num = recode_factor(sex,
+                                 "male" = 0,
+                                 "female" = 1,
+                                 "none" = 2,
+                                 "hermaphroditic" = 3,
+                                 "unknown" = 999)) |> 
+  relocate(sex_num, .after = sex)
 
-reviews_df <- reviews_df |> 
-  mutate(Recommended_label = recode(Recommended_IND, 
-                                         "1" = "Yes", 
-                                         "0" = "No"))
 
-
-reviews_df
-
+sw_df
 ```
 
 <br />
@@ -465,12 +475,12 @@ the rename function allows you rename variables in your data frame
 #| label: rename
 #| eval: false
 
-glimpse(reviews_df)
+glimpse(sw_df)
 
-reviews_df <- reviews_df |> 
-  rename("Subject" = Title)
+sw_df <- sw_df |> 
+  rename("sex_label" = sex)
 
-reviews_df
+glimpse(sw_df)
 
 
 ```
@@ -489,32 +499,27 @@ we can remove **all** missing data from data frames or variables using the drop_
 #| label: drop na
 #| eval: false
 
-demographics_df
-
-
 # we can see if are data frame has missing NA values using the is.na function.
 
-which(is.na(demographics_df$))
+which(is.na(sw_df$mass))
 
 # because there are missing values we cannot calculate some descriptive statistics
 
-mean(reviews_df$Rating)
+mean(sw_df$mass)
 
 # we can drop all NA values from the data frame
 
-reviews_dropNA <- reviews_wide |> 
+sw_dropNA <- sw_df |> 
   drop_na()
 
-reviews_dropNA
-
-mean(reviews_dropNA$Not_Recommend)
+mean(sw_dropNA$mass)
 
 # we can also just drop NAs from a variable
 
-reviews_dropNA_var <- reviews_wide |> 
-  drop_na(Not_Recommend)
+sw_dropNA_var <- sw_df |> 
+  drop_na(mass)
 
-reviews_dropNA_var
+mean(sw_dropNA_var$mass)
 
 ```
 
@@ -531,113 +536,12 @@ you can also recode the NA values for observations with the replace_na function
 #| label: replace_na
 #| eval: false
 
-reviews_wide 
+# let's replace the NAs the homeworld variable with "unknown"
 
-# let's replace the NAs in the Not recommended to 0 since there were no reviews given
+sw_df <- sw_df |> 
+  mutate(homeworld = replace_na(homeworld, "unknown"))
 
-reviews_replaceNA <- reviews_wide |> 
-  mutate(Not_Recommend = replace_na(Not_Recommend, 0))
-
-reviews_replaceNA
-
-mean(reviews_replaceNA$Not_Recommend)
-
-```
-
-<br />
-
-------------------------------------------------------------------------
-
-
-
-```{r}
-#| label: load covid data
-#| eval: false
-
-covid19 <- read_csv("time_series_covid19_confirmed_US.csv")
-
-view(covid19)
-
-
-```
-
-<br />
-
----
-
-## Tidyr function: Pivot Data
-
-pivoting data allows you to either move variables into observations or
-observations into variables.
-
-```{r}
-#| label: pivot longer
-#| eval: false
-
-# let's turn the date variables into observations
-
-covid19_longer <- covid19 |> 
-  pivot_longer(!Combined_Key, names_to = "Date", values_to = "Total")
-
-
-covid19_longer
-
-```
-
-<br />
-
-
-
-------------------------------------------------------------------------
-
-## Tidyr function: Separate, Unite, and Gather
-
-these functions allow you to split up or combine variables in your data
-frame
-
-```{r}
-#| label: separate function
-#| eval: false
-
-covid19_separate <- covid19_longer |> 
-  separate_wider_delim(Combined_Key, 
-                       delim = ", ", 
-                       names = c("City", "State", "Country"),
-                       too_few = "align_start") |> 
-  select(-Country)
-
-covid19_separate
-
-```
-
-<br />
-
-------------------------------------------------------------------------
-
-## Lubridate function: as_date
-
-the lubridate package allows you to clean and manipulate data variables
-
-```{r}
-#| label: change variable value to data
-#| eval: false
-
-glimpse(covid19_separate)
-
-covid19_date <- covid19_separate |> 
-  mutate(Date = lubridate::dmy(Date))
-
-covid19_date
-
-## we can even use this to create new variables
-
-covid19_df <- covid19_date |> 
-  mutate(Month = lubridate::month(Date, label = TRUE, abbr = FALSE)) |> 
-  relocate(Month, .after = Date) |> 
-  arrange(desc(Total))
-
-covid19_df
-
+sw_df
 
 ```
 
@@ -657,13 +561,9 @@ we want to export
 
 # now that we have this date frame cleaned let's save it
 
-covid19_df <- covid19_month
-
-covid19_df
-
 # let's export the file
 
-write_csv(covid19_df, "covid19_time_series.csv")
+write_csv(sw_df, "starwars_clean.csv")
 
 ```
 
@@ -682,7 +582,7 @@ files to work on in SPSS, SAS, or STATA
 
 # export to SPSS
 
-haven::write_sav(covid19_df, "covid19_time_series.sav")
+haven::write_sav(sw_df, "starwars_clean.sav")
 
 ```
 
