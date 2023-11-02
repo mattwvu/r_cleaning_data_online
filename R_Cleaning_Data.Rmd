@@ -1,5 +1,5 @@
 ---
-title: 'Data Cleaning'
+title: 'Data Cleaning with Tidyverse'
 author: "Matt Steele"
 date: "`r Sys.Date()`"
 output: 
@@ -24,7 +24,7 @@ output:
 
 ```{r}
 #| label: working directory
-#| include: false
+#| eval: false
 
 setwd("path_to_folder")
 
@@ -81,9 +81,9 @@ data structures.
 
 ---
 
-### Tibble function: read_csv
+## Readr function: read_csv
 
-this function allows you to read a csv file into a tibble data frame
+allows you to read a csv file into a tibble data frame
 
 ```{r}
 #| label: read_csv function
@@ -97,9 +97,9 @@ sw_df <- read_csv("starwars.csv")
 
 ------------------------------------------------------------------------
 
-### Readxl Package: Read Excel Files
+## Readxl Package: Read Excel Files
 
-this function allows you to read Excel files in a tibble data frame
+allows you to read Excel files in a tibble data frame
 
 
 ```{r}
@@ -118,7 +118,7 @@ horror_articles <- readxl::read_xlsx("halloween.xlsx", sheet = 3)
 ---
 
 
-### Haven package: Read non-proprietary data files
+## Haven package: Read non-proprietary data files
 
 The package Haven allows you to read and export non-proprietary files
 for SPSS, SAS, and STATA
@@ -137,7 +137,7 @@ demographics_df <- haven::read_sav("demographics.sav")
 ---
 
 
-### The Pipe Operator
+## The Pipe Operator
 
 The pipe operator allows you to run commands or operation on a single
 object based on an order of operations
@@ -167,7 +167,8 @@ sw_df |> # object we are working on
 <br />
 
 ------------------------------------------------------------------------
-### Tibble function: view
+
+## Tibble function: view
 
 view the contents of a data frame in a separate viewer window or in the RStudio viewer pane.
 
@@ -183,7 +184,7 @@ view(sw_df)
 
 ------------------------------------------------------------------------
 
-#### Glimpse function
+## Tibble function: glimpse
 
 like the str() function in base r, this allow you see the structure of
 your data but in a more compact manner
@@ -411,6 +412,10 @@ sw_df
 
 ```
 
+<br />
+
+---
+
 ## Forcats function: as_factor
 
 The **as_factor** function allows you to redefine a variable value as a factor using the **mutate** function.
@@ -585,6 +590,8 @@ haven::write_sav(sw_df, "starwars_clean.sav")
 
 # Part 4: Explore Your Data
 
+<br />
+
 
 -   [Psych Package](https://cran.r-project.org/web/packages/psych/index.html) -
 built-in functions for factor analysis, reliability analysis,
@@ -609,6 +616,8 @@ sw_ds <- describe(sw_df)
 write_csv(sw_ds, "starwars_ds.csv")
 
 ```
+
+<br />
 
 -   [SummaryTools Package](https://cran.r-project.org/web/packages/summarytools/index.html) -
 simplifies data exploration and descriptive statistics generation for
@@ -635,6 +644,7 @@ ctable(sw_df$sex, sw_df$gender)
 
 ```
 
+<br />
 
 -   [DataExplorer package](http://boxuancui.github.io/DataExplorer/) -
 automates and streamlines the process of exploring and visualizing
