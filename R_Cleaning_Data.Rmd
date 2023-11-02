@@ -67,7 +67,7 @@ data structures.
 | [lubridate](https://lubridate.tidyverse.org/)       | clean dates and times                                             |
 | [purr](https://purrr.tidyverse.org/)                | better functional programming                                     |
 | [forcats](https://forcats.tidyverse.org/index.html) | handle, clean, and manipulate categorical variables               |
-| [haven](https://haven.tidyverse.org/)               | read and write data formats from proprietary statistical pacakges |
+| [haven](https://haven.tidyverse.org/)               | read and write data formats from proprietary statistical packages |
 
 : Packages Included in Tidyverse
 
@@ -76,12 +76,6 @@ data structures.
 ------------------------------------------------------------------------
 
 # Part 2: Loading Data with Tidyverse
-
-<br />
-
----
-
-## Loading Data
 
 <br />
 
@@ -149,7 +143,7 @@ The pipe operator allows you to run commands or operation on a single
 object based on an order of operations
 
 -   let's say you want to see the **name**, **height**, **mass**, and **species**
-    of characters who were born on **Tatooine** department
+    of characters who were born on **Tatooine**
 
 ```{r}
 #| label: pipe operator example
@@ -226,8 +220,7 @@ glimpse(sw_df)
 
 ## Dplyr function: filter
 
-the filter function allows you to *filter* your data frame using a
-observations in a variable
+the **filter** function allows you to select rows in your data frame that meet specific conditions or criteria in a variable
 
 ```{r}
 #| label: filter function
@@ -286,7 +279,7 @@ sw_eye50
 
 ## Dplyr function: select
 
-the select function allows you to *keep* or *discard* variables
+the **select** function allows you to *keep* or *discard* variables
 
 ```{r}
 #| label: select function
@@ -314,10 +307,11 @@ sw_not_select
 
 ## Dplyr function: mutate
 
-the mutate function allows you to change variables OR create new
-variables based on the observations in the variables
+the **mutate** function *creates* new variables in your data or *change* existing variables by performing calculations or transformations.
 
-*NOTE: if you name your variable as an existing variable, it WILL overwrite the existing variable. If you give it a new name, it will create a new variable
+NOTE: if you name your variable as an *existing variable*, it will
+*overwrite* the existing variable. If you give it a *new name*, it will
+create a *new variable*
 
 ```{r}
 #| label: mutate function
@@ -346,7 +340,7 @@ demographics_overwrite
 
 ## Dplyr function: arrange
 
-the arrange function allows you to sort variables
+the **arrange** function allows you to *sort* variables
 
 ```{r}
 #| label: arrange function
@@ -370,7 +364,7 @@ sw_df |>
 
 ## Dplyr function: group_by & summarise
 
-the **group_by** function allows you to group common observations in a variable and **summarise** function allows you to get descriptive statistics about the groupings
+the **group_by** function allows you to *group* common observations in a variable and **summarise** function allows you to get descriptive statistics about the groupings
 
 ```{r}
 #| label: group_by and summarise
@@ -387,8 +381,7 @@ sw_group
 sw_group <- sw_df |> 
   group_by(sex) |>
   summarise(avg_height = mean(height), # get the mean of height for each group
-            count = n(), # get the count
-            avg_bmi = mean(height/mass) # calculate bmi and get average
+            count = n() # get the count
             ) 
 
 ```
@@ -420,7 +413,7 @@ sw_df
 
 ## Forcats function: as_factor
 
-This function allows you to redefine a variable value as a factor using the **mutate** function.
+The **as_factor** function allows you to redefine a variable value as a factor using the **mutate** function.
 
 ```{r}
 #| label: recode factors
@@ -469,7 +462,7 @@ sw_df
 
 ## Dplyr function: rename
 
-the rename function allows you rename variables in your data frame
+the **rename** function allows you rename variables in your data frame
 
 ```{r}
 #| label: rename
@@ -493,7 +486,7 @@ glimpse(sw_df)
 
 ## Tidyr function: drop_na
 
-we can remove **all** missing data from data frames or variables using the drop_na function
+we can remove **all** missing data from data frames or variables using the **drop_na** function
 
 ```{r}
 #| label: drop na
@@ -530,7 +523,7 @@ mean(sw_dropNA_var$mass)
 
 ## Tidyr function: replace_na
 
-you can also recode the NA values for observations with the replace_na function
+you can also recode the NA values for observations with the **replace_na** function
 
 ```{r}
 #| label: replace_na
@@ -551,7 +544,7 @@ sw_df
 
 ## Readr function: write_csv
 
-the write_csv function allows us to export data frames to a csv file
+the **write_csv** function allows us to export data frames to a csv file
 once we are done cleaning it up or when we have done some analysis that
 we want to export
 
@@ -593,7 +586,9 @@ haven::write_sav(sw_df, "starwars_clean.sav")
 # Part 4: Explore Your Data
 
 
--   [Psych Package](https://cran.r-project.org/web/packages/psych/index.html)
+-   [Psych Package](https://cran.r-project.org/web/packages/psych/index.html) -
+built-in functions for factor analysis, reliability analysis,
+descriptive statistics and data visualization.
 
 ```{r}
 #| label: Psych Package
@@ -609,11 +604,15 @@ library(psych)
 #| label: describe function
 #| eval: false
 
-describe(reviews_df)
+sw_ds <- describe(sw_df)
+
+write_csv(sw_ds, "starwars_ds.csv")
 
 ```
 
--   [SummaryTools Package](https://cran.r-project.org/web/packages/summarytools/index.html)
+-   [SummaryTools Package](https://cran.r-project.org/web/packages/summarytools/index.html) -
+simplifies data exploration and descriptive statistics generation for
+data frames and vectors.
 
 ```{r}
 #| label: SummaryTools Package
@@ -628,17 +627,18 @@ library(summarytools)
 #| label: summarytools functions
 #| eval: false
 
-descr(reviews_df)
+descr(sw_df)
 
-freq(reviews_df$Division_Name)
+freq(sw_df$sex)
 
-ctable(reviews_df$Recommended_IND, reviews_df$Division_Name)
+ctable(sw_df$sex, sw_df$gender)
 
 ```
 
 
-
--   [DataExplorer package](http://boxuancui.github.io/DataExplorer/)
+-   [DataExplorer package](http://boxuancui.github.io/DataExplorer/) -
+automates and streamlines the process of exploring and visualizing
+datasets.
 
 ```{r}
 #| label: DataExplorer
