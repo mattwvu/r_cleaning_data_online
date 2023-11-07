@@ -203,14 +203,18 @@ glimpse(sw_df)
 
 # Part 3: Cleaning Data
 
-|                                                                   |                                                                |
-|-----------------------|-------------------------------------------------|
-| [filter](https://dplyr.tidyverse.org/reference/filter.html)       | retains or filters out observations based on variable criteria |
-| [select](https://dplyr.tidyverse.org/reference/select.html)       | retains or filters out variables                               |
-| [arrange](https://dplyr.tidyverse.org/reference/arrange.html)     | sorts variables                                                |
-| [mutate](https://dplyr.tidyverse.org/reference/mutate.html)       | change variable's observations OR create a new variable and observations using observations from another variable                       |
-| [group_by](https://dplyr.tidyverse.org/reference/group_by.html)   | group observations                                             |
-| [summarise](https://dplyr.tidyverse.org/reference/summarise.html) | get descriptive statistics about a variable                    |
+|                                                                                            |                                                                                                                   |
+|-------------------------|-----------------------------------------------|
+| [filter](https://dplyr.tidyverse.org/reference/filter.html)                                | retains or filters out observations based on variable criteria                                                    |
+| [select](https://dplyr.tidyverse.org/reference/select.html)                                | retains or filters out variables                                                                                  |
+| [arrange](https://dplyr.tidyverse.org/reference/arrange.html)                              | sorts variables                                                                                                   |
+| [mutate](https://dplyr.tidyverse.org/reference/mutate.html)                                | change variable's observations OR create a new variable and observations using observations from another variable |
+| [group_by](https://dplyr.tidyverse.org/reference/group_by.html)                            | group observations                                                                                                |
+| [summarise](https://dplyr.tidyverse.org/reference/summarise.html)                          | get descriptive statistics about a variable                                                                       |
+| [relocate](https://dplyr.tidyverse.org/reference/relocate.html)                            | change the position of variables in the data frame                                                                |
+| [rename](https://dplyr.tidyverse.org/reference/rename.html)                                | change the name of an individual variable                                                                         |
+| [drop_na](https://tidyr.tidyverse.org/reference/drop_na.html)                              | remove ALL missing values from a data frame or variable                                                           |
+| [replace_na](https://tidyr.tidyverse.org/reference/replace_na.html?q=replace_na#ref-usage) | replace missing values with a specified                    |
 
 : Main Tidyverse Functions
 
