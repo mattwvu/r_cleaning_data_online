@@ -97,45 +97,15 @@ sw_df <- read_csv("starwars.csv")
 
 ------------------------------------------------------------------------
 
-## Readxl Package: Read Excel Files
+## Loading Proprietary Data
 
-allows you to read Excel files in a tibble data frame
+- [readXl](https://readxl.tidyverse.org/) - this package allows you to read Excel files in a tibble data frame
 
-
-```{r}
-#| label: read excel files
-#| eval: false
-#| echo: true
-
-horror_books <- readxl::read_xlsx("halloween.xlsx", sheet = 1)
-horror_movies <- readxl::read_xlsx("halloween.xlsx", sheet = 2)
-horror_articles <- readxl::read_xlsx("halloween.xlsx", sheet = 3)
-
-```
+- [haven](https://haven.tidyverse.org/) - this package allows you to read and export non-proprietary files for SPSS, SAS, and STATA
 
 <br />
 
 ---
-
-
-## Haven package: Read non-proprietary data files
-
-The package Haven allows you to read and export non-proprietary files
-for SPSS, SAS, and STATA
-
-```{r}
-#| read spss - haven
-#| eval: false
-
-
-demographics_df <- haven::read_sav("demographics.sav")
-
-```
-
-<br />
-
----
-
 
 ## The Pipe Operator
 
@@ -322,20 +292,20 @@ create a *new variable*
 #| label: mutate function
 #| eval: false
 
-demographics_df
+# create a new variable
 
-demographics_mutate <- demographics_df |> 
-  mutate(income_new = income/1000) |>  # create new variable
-  relocate(income_new, .after = income) # relocate variable in data frame
+sw_df
 
-demographics_mutate
+sw_df <- sw_df |> 
+  mutate(bmi = height/mass) |>  # run mutate operation
+  relocate(bmi, .after = mass) # relocate variable in data frame
 
 # let's overwrite the old variable
 
-demographics_overwrite <- demographics_df |> 
-  mutate(income = income/1000) # overwrite income variable
+sw_overwrite <- sw_df |> 
+  mutate(height = height/12) # overwrite variable
 
-demographics_overwrite
+sw_overwrite
 
 ```
 
@@ -385,9 +355,12 @@ sw_group
 
 sw_group <- sw_df |> 
   group_by(sex) |>
-  summarise(avg_height = mean(height), # get the mean of height for each group
-            count = n() # get the count
-            ) 
+  summarise(avg_height = mean(height), # get mean
+            n = n()) # get number 
+
+sw_group
+
+write_csv(sw_group, "sw_sex_dv.csv") # export
 
 ```
 
@@ -420,27 +393,6 @@ sw_df
 
 ---
 
-## Forcats function: as_factor
-
-The **as_factor** function allows you to redefine a variable value as a factor using the **mutate** function.
-
-```{r}
-#| label: recode factors
-#| eval: false
-
-sw_df
-
-sw_df <- sw_df |> 
-  mutate(sex = as_factor(sex))
-
-levels(sw_df$sex)
-
-```
-
-
-<br />
-
----
 
 ## Dyplr Function: recode
 
@@ -453,14 +405,10 @@ we can rename the values of observations within a variable using the **mutate** 
 # let's create a new variable with to give numeric levels instead of value labels
 
 sw_df <- sw_df |> 
-  mutate(sex_num = recode_factor(sex,
-                                 "male" = 0,
-                                 "female" = 1,
-                                 "none" = 2,
-                                 "hermaphroditic" = 3,
-                                 "unknown" = 999)) |> 
-  relocate(sex_num, .after = sex)
-
+  mutate(gender_num = recode(gender,
+                             "masculine" = 0,
+                             "feminine" = 1)) |>
+  relocate(gender_num, .after = gender)
 
 sw_df
 ```
@@ -480,7 +428,7 @@ the **rename** function allows you rename variables in your data frame
 glimpse(sw_df)
 
 sw_df <- sw_df |> 
-  rename("sex_label" = sex)
+  rename("gender_label" = gender)
 
 glimpse(sw_df)
 
@@ -503,25 +451,25 @@ we can remove **all** missing data from data frames or variables using the **dro
 
 # we can see if are data frame has missing NA values using the is.na function.
 
-which(is.na(sw_df$mass))
+which(is.na(sw_df$bmi))
 
 # because there are missing values we cannot calculate some descriptive statistics
 
-mean(sw_df$mass)
+mean(sw_df$bmi)
 
 # we can drop all NA values from the data frame
 
 sw_dropNA <- sw_df |> 
   drop_na()
 
-mean(sw_dropNA$mass)
+mean(sw_dropNA$bmi)
 
 # we can also just drop NAs from a variable
 
 sw_dropNA_var <- sw_df |> 
-  drop_na(mass)
+  drop_na(bmi)
 
-mean(sw_dropNA_var$mass)
+mean(sw_dropNA_var$bmi)
 
 ```
 
@@ -538,12 +486,15 @@ you can also recode the NA values for observations with the **replace_na** funct
 #| label: replace_na
 #| eval: false
 
-# let's replace the NAs the homeworld variable with "unknown"
+# let's replace the NAs the gender_label variable with "unknown"
+
 
 sw_df <- sw_df |> 
-  mutate(homeworld = replace_na(homeworld, "unknown"))
+  mutate(gender_label = replace_na(gender_label, "unknown")) |> 
+  mutate(gender_label = as_factor(gender_label))
 
-sw_df
+levels(sw_df$gender_label)
+
 
 ```
 
@@ -573,24 +524,6 @@ write_csv(sw_df, "starwars_clean.csv")
 
 ------------------------------------------------------------------------
 
-## Haven function: Export as proprietary file
-
-we can even export files that we have been working on as proprietary
-files to work on in SPSS, SAS, or STATA
-
-```{r}
-#| label: export SPSS file
-#| eval: false
-
-# export to SPSS
-
-haven::write_sav(sw_df, "starwars_clean.sav")
-
-```
-
-<br />
-
-------------------------------------------------------------------------
 
 # Part 4: Explore Your Data
 
